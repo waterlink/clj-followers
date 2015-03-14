@@ -11,7 +11,7 @@
   "Sends a message to given socket."
   [socket message]
   (when-not (nil? message)
-    (println "Send: " message)
+    (print ".")
     (let [formatted-message (str message "\r\n")
           writer (io/writer socket)]
       (.write writer formatted-message)
