@@ -14,30 +14,41 @@
     (let [formatted-message (str message "\r\n")]
       (.write (io/writer socket) message))))
 
+(defn- worker-error-handler
+  [name worker error]
+  (println "[" name "] ERROR: " error "; closing connection")
+  (.close @worker))
+
 (defn- handle-message
+  "Handles one message from socket."
   [client-socket message handler]
   (handler client-socket message))
 
 (defn- handle-connection
+  "Handles one connection."
   [client-socket reader handler]
   (loop []
     (let [message (receive-message reader)]
-      (when-not (nil? message)
+      (if-not (nil? message)
         (handle-message client-socket message handler)
-        (recur)))))
+        (Thread/sleep 10))
+      (recur)))
+  client-socket)
 
 (defn- handle-socket
+  "Accepts connections on server socket."
   [name server-socket handler]
   (loop []
     (let [client-socket (.accept server-socket)
-          reader (io/reader client-socket)]
-      (future
-        (handle-connection client-socket reader handler)
-        (println (str "[" name "] closing"))
-        (.close client-socket)))
+          reader (io/reader client-socket)
+          worker (agent client-socket)]
+      (.setKeepAlive client-socket true)
+      (set-error-handler! worker worker-error-handler)
+      (send-off worker handle-connection reader handler))
     (recur)))
 
 (defn serve
+  "Runs server on specific port."
   [name port handler]
   (future
     (with-open [server-socket (ServerSocket. port)]

@@ -10,7 +10,7 @@
 
 (defn- source-handler
   [client payload]
-  (when-not (nil? payload)
+  #_(when-not (nil? payload)
     (println (str "got event: " payload))))
 
 (defn -main
