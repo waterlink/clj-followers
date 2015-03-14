@@ -10,7 +10,7 @@
 
 (defn handle-client
   [clients client-socket user]
-  (change-for-one-user clients user #(merge % {client-socket 1})))
+  (change-for-one-user clients user #(assoc % client-socket 1)))
 
 (defn remove-client
   [clients client-socket user]
