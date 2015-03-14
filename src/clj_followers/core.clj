@@ -5,13 +5,11 @@
 
 (defn- client-handler
   [client payload]
-  (when-not (nil? payload)
-    (println (str "got client: " payload))))
+  nil)
 
 (defn- source-handler
   [client payload]
-  #_(when-not (nil? payload)
-    (println (str "got event: " payload))))
+  nil)
 
 (defn -main
   []
