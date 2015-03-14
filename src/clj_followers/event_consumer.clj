@@ -6,8 +6,9 @@
     handler :handler}]
   (let [events (next-ready-from-queue)
         ids-to-remove (map #(:id %) events)]
-    (doall (map handler events))
-    (remove-from-queue ids-to-remove)))
+    (when (-> (count events) (> 0))
+      (doall (map handler events))
+      (remove-from-queue ids-to-remove))))
 
 (defn build
   [options]

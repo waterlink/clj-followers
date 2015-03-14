@@ -7,12 +7,15 @@
   [reader]
   (.readLine (io/reader reader)))
 
-(defn- send-message
+(defn send-message
   "Sends a message to given socket."
   [socket message]
-  (if-not (nil? message)
-    (let [formatted-message (str message "\r\n")]
-      (.write (io/writer socket) message))))
+  (when-not (nil? message)
+    (println "Send: " message)
+    (let [formatted-message (str message "\r\n")
+          writer (io/writer socket)]
+      (.write writer formatted-message)
+      (.flush writer))))
 
 (defn- worker-error-handler
   [name worker error]
